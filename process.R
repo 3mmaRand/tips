@@ -25,10 +25,12 @@ library(tidyverse)
 
 # Import ------------------------------------------------------------------
 
-# import multiple csv files into one dataframe
+# get a vector of the file names
+files <- list.files(path = "track", full.names = TRUE )
+
+# import multiple data files into one dataframe
 # using map_df() from purrr package
 # clean the column names up using janitor::clean_names()
-files <- list.files(path = "track", full.names = TRUE )
 tracking <- files |> 
   set_names() |>
   map_dfr(read_table, .id = "file") |>
@@ -48,15 +50,11 @@ tracking <- tracking |>
           into = c("type", "conc"), 
           regex = "([^_]{2,3})_(.+)") 
 
-# convert concentration to numeric
-tracking <- tracking |> 
-  mutate(conc = as.numeric(conc))
-
 
 # Plot --------------------------------------------------------------------
 
-
-# plot distance for each type and concentration
+# plot speed for each type and concentration
 tracking |> 
-  ggplot(aes(x = conc, y = max_speed, color = type)) +
+  ggplot(aes(x = conc, y = length, color = type)) +
   geom_boxplot() 
+
